@@ -1,2 +1,2 @@
-furniture = "sofa"
+furniture = "divāns"
 print(furniture)
