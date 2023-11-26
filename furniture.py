@@ -1,0 +1,2 @@
+furniture = "sofa"
+print(furniture)
