@@ -1,6 +1,3 @@
-import library
-
-
 class Book:
     def __init__(self, title, author):
         self.title = title
@@ -36,9 +33,9 @@ class Library:
 
 
 library = Library()
+
 library.add_book("Harry", "JK")
 library.add_book("Harry2", "JK2")
 library.add_book("Harry3", "JK3")
+
 library.display_books()
-
-
