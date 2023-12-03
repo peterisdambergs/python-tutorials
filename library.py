@@ -11,7 +11,16 @@ class Book:
             self.is_borrowed = True
             print(f"Success, the book {self.title} is now borrowed")
 
+    def return_book(self):
+        if self.is_borrowed:
+            self.is_borrowed = False
+            print(f"Success, the book {self.title} is now returned")
+        else:
+            print(f"Failure, the book {self.title} was already returned")
+
 
 newbook = Book("Harry Potter", "JK")
 newbook.borrow()
-newbook.borrow()
+newbook.return_book()
+newbook.return_book()
+
