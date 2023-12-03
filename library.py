@@ -1,3 +1,6 @@
+import library
+
+
 class Book:
     def __init__(self, title, author):
         self.title = title
@@ -19,8 +22,23 @@ class Book:
             print(f"Failure, the book {self.title} was already returned")
 
 
-newbook = Book("Harry Potter", "JK")
-newbook.borrow()
-newbook.return_book()
-newbook.return_book()
+class Library:
+    def __init__(self):
+        self.books = []
+
+    def add_book(self, title, author):
+        book = Book(title, author)
+        self.books.append(book)
+
+    def display_books(self):
+        for book in self.books:
+            print(book.title, book.is_borrowed)
+
+
+library = Library()
+library.add_book("Harry", "JK")
+library.add_book("Harry2", "JK2")
+library.add_book("Harry3", "JK3")
+library.display_books()
+
 
