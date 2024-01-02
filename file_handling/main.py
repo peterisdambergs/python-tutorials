@@ -1,42 +1,49 @@
-import csv
-
-
-def main():
-    entries = []
-
-    # with open("data.csv", "r", encoding="utf-8") as f:
-    #     reader = csv.DictReader(f)
-    #     for row in reader:
-    #         entries.append(row)
-
-    with open("data.csv", "r", encoding="utf-8") as f:
-        headers = f.readline().split(",")
+def get_headers_and_lines_from_csv_file(csv_file):
+    with open(csv_file, "r", encoding="utf-8") as f:
+        headers = f.readline().strip().split(",")
         lines = f.readlines()
 
-        for line in lines:
-            line_list = line.split(",")
-            name, age, country, occupation = line_list
+    return headers, lines
 
-            entry = {
-                headers[0]: name,
-                headers[1]: age,
-                headers[2]: country,
-                headers[3].strip(): occupation.strip()
-            }
 
-            entries.append(entry)
+def get_entry_from_line(line, headers):
+    line_list = line.strip().split(",")
 
+    entry = {}
+    for key, value in zip(headers, line_list):
+        entry[key] = value
+
+    return entry
+
+
+def get_entries_from_csv(csv_file):
+    headers, lines = get_headers_and_lines_from_csv_file(csv_file)
+    entries = []
+
+    for line in lines:
+        entry = get_entry_from_line(line, headers)
+        entries.append(entry)
+
+    return entries
+
+
+def print_average_age(entries):
     ages = [int(entry.get("Age")) for entry in entries]
+    print(f"Average age is {sum(ages)/len(ages)}")
+
+
+def print_names_by_occupation(entries):
     occupations = sorted(set([entry.get("Occupation") for entry in entries]))
 
     for occupation in occupations:
-        print(occupation, "\n--------")
+        name_list = [entry.get("Name") for entry in entries if entry.get("Occupation") == occupation]
+        print(f"{occupation}: {name_list}")
 
-        for entry in entries:
-            if entry.get("Occupation") == occupation:
-                print(entry.get("Name"))
 
-        print("\n*********\n")
+def main():
+    entries = get_entries_from_csv("data.csv")
+    print_average_age(entries)
+    print_names_by_occupation(entries)
 
 
 if __name__ == "__main__":
