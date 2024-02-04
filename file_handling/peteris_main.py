@@ -23,11 +23,21 @@ def print_names_by_occupation(entries):
         print(occupation, names)
 
 
+def add_new_entry_to_csvfile(name, age, country, occupation):
+    with open("data.csv", "a") as f:
+        f.write(f"\n{name},{age},{country},{occupation}")
+
+
+def print_names_by_country(entries, country):
+    names = [entry.get("Name") for entry in entries if entry.get("Country") == country]
+    print(f"{country} => {names}")
+
+
 def main():
     entries = get_entries_from_csvfile("data.csv")
-    print_average_age(entries)
-    print_names_by_occupation(entries)
-
+    # print_average_age(entries)
+    # print_names_by_occupation(entries)
+    # print_names_by_country(entries, "Germany")
 
 if __name__ == "__main__":
     main()
