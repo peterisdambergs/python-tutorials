@@ -33,11 +33,22 @@ def print_names_by_country(entries, country):
     print(f"{country} => {names}")
 
 
+def update_csvfile_age_by_name(csvfile, name, age):
+    entries = get_entries_from_csvfile(csvfile)
+    with open(csvfile, "w") as f:
+        f.write(','.join(entries[0].keys()))
+        for entry in entries:
+            entry["Age"] = str(age) if entry.get("Name") == name else str(entry.get("Age"))
+            f.write(f"\n{','.join(entry.values())}")
+
+
 def main():
     entries = get_entries_from_csvfile("data.csv")
     # print_average_age(entries)
     # print_names_by_occupation(entries)
     # print_names_by_country(entries, "Germany")
+    update_csvfile_age_by_name("data.csv", "Erik", 25)
+
 
 if __name__ == "__main__":
     main()
