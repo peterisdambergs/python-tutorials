@@ -55,8 +55,8 @@ def sort_entries_by_age(entries):
 
 
 def filter_by_age_range(entries, min, max, to_sort=True):
-    if to_sort:
-        entries = sorted(entries, key=lambda entry: entry.get("Age"))
+    entries = sorted(entries, key=lambda e: e.get("Age")) if to_sort else entries
+
     with open(f"data_filtered_from_{min}_to_{max}.csv", "w") as f:
         f.write(formatted_header(entries[0]))
         for entry in entries:
