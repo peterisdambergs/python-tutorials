@@ -1,4 +1,6 @@
-import os, requests
+import os, re, requests
+
+from bs4 import BeautifulSoup
 
 
 def get_html_from_source(url="https://www.delfi.lv/bizness/biznesa_vide", file_name="source.html"):
@@ -13,16 +15,11 @@ def get_html_from_source(url="https://www.delfi.lv/bizness/biznesa_vide", file_n
     return html
 
 
-def get_articles_from_html(html):
-    articles = html.replace("<article", "</article>").replace("headline--responsive ", "").split("</article>")[1:-1]
-    return [article for article in articles if 'itemtype="http://schema.org/NewsArticle"' in article]
-
-
 def main():
     html = get_html_from_source()
-    articles = get_articles_from_html(html)
+    soup = BeautifulSoup(html, "lxml")
 
-    for article in articles:
+    for article in soup.find_all("article"):
         print(article)
 
 
