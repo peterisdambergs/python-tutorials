@@ -16,6 +16,7 @@ def get_html_from_source(url, file_name):
 def main():
     html = get_html_from_source("https://www.delfi.lv/bizness/biznesa_vide", "source.html")
     soup = BeautifulSoup(html, "lxml")
+
     articles = soup.find_all("article")
     for article in articles:
         print(article)

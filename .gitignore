@@ -6,6 +6,7 @@ __pycache__/
 .idea/
 *.csv
 *.html
+*.txt
 
 # C extensions
 *.so
