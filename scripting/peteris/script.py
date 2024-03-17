@@ -20,6 +20,7 @@ def get_link_image_text_from_article(article):
 
     return link, image, text
 
+
 def main():
     html = get_html_from_source("https://www.delfi.lv/bizness/biznesa_vide", "source.html")
     soup = BeautifulSoup(html, "lxml")
@@ -30,7 +31,7 @@ def main():
 
     for article in articles:
         link, image, text = get_link_image_text_from_article(article)
-        print(text)git gi
+        print(text)
         print(link)
         print(f"{image}\n")
 

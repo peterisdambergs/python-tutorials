@@ -10,7 +10,7 @@ def get_html(url):
 def create_article_file_path(article_name, article_category):
     forbidden_char_pattern = r"[^a-zA-Z0-9 ()_\-,.*]+"
     file_name = re.sub(forbidden_char_pattern, "", article_name)[:35] + ".html"
-    return os.path.join(os.getcwd(), article_category, file_name).replace(r"\\\\", r"\\")
+    return os.path.join(os.getcwd(), article_category, file_name)
 
 
 def get_formatted_article(raw_article, category):
@@ -26,13 +26,13 @@ def get_formatted_article(raw_article, category):
     return article
 
 
-def get_raw_articles_from_category(root_url, category):
+def get_raw_articles_by_category(root_url, category):
     html = get_html(f"{root_url}/{category}")
     category_soup = BeautifulSoup(html, "lxml")
     return category_soup.find_all("article")
 
 
-def create_article_file(article):
+def create_article_file(article, toc_file_name):
     html = get_html(article.get("url"))
     article_soup = BeautifulSoup(html, "lxml")
 
@@ -42,6 +42,8 @@ def create_article_file(article):
 
         for section in article_soup.main.main.find_all("section"):
             f.write(f"<p>{section.get_text()}</p>\n")
+
+        f.write(f"<h3><a href='..\\{toc_file_name}.html'>Go Back</a></h3>\n")
 
 
 def create_articles(root_url, category_dict, toc_file_name, article_count=5):
@@ -53,10 +55,10 @@ def create_articles(root_url, category_dict, toc_file_name, article_count=5):
             f.write(f"<h3>{category_dict.get(category)}</h3>\n")
             f.write("<ul>\n")
 
-            raw_articles = get_raw_articles_from_category(root_url, category)
+            raw_articles = get_raw_articles_by_category(root_url, category)
             for num, raw_article in enumerate(raw_articles):
                 article = get_formatted_article(raw_article, category)
-                create_article_file(article)
+                create_article_file(article, toc_file_name)
 
                 f.write(f"<li><a href='{article.get('file_path')}'>{article.get('name')}</a></li>\n")
                 if num == article_count-1: break
@@ -75,7 +77,7 @@ def main():
         "pasaule": "World"
     }
 
-    create_articles(root_url, category_dict, "articles")
+    create_articles(root_url, category_dict, "articles", 3)
 
 
 if __name__ == "__main__":
