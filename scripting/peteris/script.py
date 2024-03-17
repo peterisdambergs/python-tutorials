@@ -13,27 +13,31 @@ def get_html_from_source(url, file_name):
         return f.read()
 
 
-def get_link_image_text_from_article(article):
-    link = f"https://delfi.lv{article.a.get('href')}"
-    image = article.img.get("src")
-    text = article.get_text()
+def get_formatted_article(raw_article, category, num):
 
-    return link, image, text
+    article = {
+        "text": raw_article.get_text(),
+        "link": f"https://delfi.lv{raw_article.a.get('href')}",
+        "image": raw_article.img.get("src"),
+        "path": os.path.join(os.getcwd(), category, f"{num}.html")
+    }
+
+    return article
 
 
 def main():
     html = get_html_from_source("https://www.delfi.lv/bizness/biznesa_vide", "source.html")
     soup = BeautifulSoup(html, "lxml")
 
-    articles = soup.find_all("article")
-    # for article in articles:
-    #     print(article)
+    raw_articles = soup.find_all("article")
 
-    for article in articles:
-        link, image, text = get_link_image_text_from_article(article)
-        print(text)
-        print(link)
-        print(f"{image}\n")
+    for num, raw_article in enumerate(raw_articles):
+        article = get_formatted_article(raw_article, "bizness", num+1)
+        print(article)
+
+
+
+
 
 
 if __name__ == "__main__":
