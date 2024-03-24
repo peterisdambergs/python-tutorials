@@ -3,30 +3,34 @@ import os, requests
 from bs4 import BeautifulSoup
 
 
-def get_html_from_source(url, file_name):
-    if not os.path.exists(file_name):
-        response = requests.get(url)
-        with open(file_name, "w", encoding="utf-8") as f:
-            f.write(response.text)
-
-    with open(file_name, "r", encoding="utf-8") as f:
-        return f.read()
+def get_html_from_url(url):
+    html = requests.get(url).text
+    return html
 
 
 def get_formatted_article(raw_article, category, num):
-
+    link = f"https://delfi.lv{raw_article.a.get('href')}"
     article = {
-        "text": raw_article.get_text(),
-        "link": f"https://delfi.lv{raw_article.a.get('href')}",
+        "name": raw_article.get_text(),
+        "link": link,
         "image": raw_article.img.get("src"),
-        "path": os.path.join(os.getcwd(), category, f"{num}.html")
+        "path": os.path.join(category, f"{num}.html"),
+        "content": get_article_content(link)
     }
 
     return article
 
 
+def get_article_content(link):
+    html = get_html_from_url(link)
+    soup = BeautifulSoup(html, "lxml")
+
+    raw_sections = soup.find("main").find("main").find_all("section")
+    return "\n".join([raw_section.text for raw_section in raw_sections])
+
+
 def main():
-    html = get_html_from_source("https://www.delfi.lv/bizness/biznesa_vide", "source.html")
+    html = get_html_from_url("https://www.delfi.lv/bizness/biznesa_vide")
     soup = BeautifulSoup(html, "lxml")
 
     raw_articles = soup.find_all("article")
@@ -34,10 +38,7 @@ def main():
     for num, raw_article in enumerate(raw_articles):
         article = get_formatted_article(raw_article, "bizness", num+1)
         print(article)
-
-
-
-
+        if num == 0: break
 
 
 if __name__ == "__main__":
