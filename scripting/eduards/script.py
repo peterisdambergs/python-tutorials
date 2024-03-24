@@ -10,7 +10,7 @@ def get_html(url):
 def create_article_file_path(article_name, article_category):
     forbidden_char_pattern = r"[^a-zA-Z0-9 ()_\-,.*]+"
     file_name = re.sub(forbidden_char_pattern, "", article_name)[:35] + ".html"
-    return os.path.join(os.getcwd(), article_category, file_name)
+    return os.path.join(article_category, file_name)
 
 
 def get_formatted_article(raw_article, category):
@@ -61,7 +61,7 @@ def create_articles(root_url, category_dict, toc_file_name, article_count=5):
                 create_article_file(article, toc_file_name)
 
                 f.write(f"<li><a href='{article.get('file_path')}'>{article.get('name')}</a></li>\n")
-                if num == article_count-1: break
+                if num + 1 == article_count: break
 
             f.write("</ul>\n")
 
