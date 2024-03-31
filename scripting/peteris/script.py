@@ -4,8 +4,7 @@ from bs4 import BeautifulSoup
 
 
 def get_html_from_url(url):
-    html = requests.get(url).text
-    return html
+    return requests.get(url).text
 
 
 def get_formatted_article(raw_article, category, num):
@@ -29,16 +28,31 @@ def get_article_content(link):
     return "\n".join([raw_section.text for raw_section in raw_sections])
 
 
-def main():
-    html = get_html_from_url("https://www.delfi.lv/bizness/biznesa_vide")
+def get_articles(root_url, category, article_count):
+    html = get_html_from_url(root_url+category)
     soup = BeautifulSoup(html, "lxml")
 
     raw_articles = soup.find_all("article")
+    articles = []
 
-    for num, raw_article in enumerate(raw_articles):
-        article = get_formatted_article(raw_article, "bizness", num+1)
-        print(article)
-        if num == 0: break
+    for num, raw_article in enumerate(raw_articles, start=1):
+        article = get_formatted_article(raw_article, category, num)
+        articles.append(article)
+        if article_count == num: break
+
+    return articles
+
+
+def main():
+    categories = ["biznesa_vide", "bankas_un_finanses", "tehnologijas", "nekustamais-ipasums", "pasaule"]
+    root_url = "https://www.delfi.lv/bizness/"
+
+    article_dict = {}
+
+    for category in categories:
+        article_dict[category] = get_articles(root_url, category, 3)
+
+    print(article_dict)
 
 
 if __name__ == "__main__":
