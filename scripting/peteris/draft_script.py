@@ -44,16 +44,28 @@ def get_articles(root_url, category, article_count):
     return articles
 
 
+def create_toc(article_dict):
+    with open("toc.html", "w", encoding="utf-8") as f:
+        f.write("<h1>Table of Contents</h1>\n")
+        for category in article_dict:
+            f.write(f"<h3>{category}</h3>\n<ol>\n")
+            for article in article_dict.get(category):
+                f.write(f"<li><a href='{article.get('path')}'>{article.get('name')}</a></li>\n")
+            f.write("</ol>\n")
+
+
 def main():
     root_url = "https://www.delfi.lv/bizness"
-    categories = ["biznesa_vide", "bankas_un_finanses", "tehnologijas", "nekustamais-ipasums", "pasaule"]
+    category_dict = {
+        "biznesa_vide": "Economy",
+        "bankas_un_finanses": "Finance",
+        "tehnologijas": "Tech",
+        "nekustamais-ipasums": "Real Estate",
+        "pasaule": "World"
+    }
 
-    article_dict = {}
-
-    for category in categories:
-        article_dict[category] = get_articles(root_url, category, 5)
-
-    print(article_dict)
+    article_dict = {category: get_articles(root_url, category, 3) for category in category_dict}
+    create_toc(article_dict)
 
 
 if __name__ == "__main__":
