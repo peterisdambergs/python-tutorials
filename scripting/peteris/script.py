@@ -43,11 +43,11 @@ def get_articles(root_url, category, article_count):
     return articles
 
 
-def create_toc(article_dict):
+def create_toc(article_dict, delfi_categories):
     with open("toc.html", "w", encoding="utf-8") as f:
         f.write("<h1>Table of Contents</h1>\n")
-        for category in article_dict:
-            f.write(f"<h3>{category}</h3>\n")
+        for (category_name, category) in zip(delfi_categories, article_dict):
+            f.write(f"<h3>{category_name}</h3>\n")
             f.write("<ol>\n")
             for article in article_dict.get(category):
                 f.write(f"<li><a href={article.get('path')}>{article.get('name')}</a></li>\n")
@@ -72,11 +72,12 @@ def create_formatted_articles(article_dict):
 
 def main():
     categories = ["biznesa_vide", "bankas_un_finanses", "tehnologijas", "nekustamais-ipasums", "pasaule"]
+    delfi_categories = ["Ekonomika", "Finanses", "Tehnologijas", "Nekustamais Ipasums", "Pasaule"]
     root_url = "https://www.delfi.lv/bizness/"
 
     article_dict = {category: get_articles(root_url, category, 2) for category in categories}
 
-    create_toc(article_dict)
+    create_toc(article_dict, delfi_categories)
     create_article_dirs(article_dict)
     create_formatted_articles(article_dict)
 
