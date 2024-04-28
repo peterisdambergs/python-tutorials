@@ -54,6 +54,22 @@ def create_toc(article_dict):
             f.write("</ol>\n")
 
 
+def create_article_dirs(article_dict):
+    for category in article_dict:
+        if not os.path.exists(category):
+            os.mkdir(category)
+
+
+def create_formatted_articles(article_dict):
+    for category in article_dict:
+        for article in article_dict.get(category):
+            with open(article.get('path'), "w", encoding="utf-8") as f:
+                f.write(f"<a href='{article.get('link')}'><img src={article.get('image')} alt='Text'></a>")
+                f.write(f"<h1><a href='{article.get('link')}'>{article.get('name')}</a></h1>")
+                f.write(f"<p>{article.get('content')}</p>")
+                f.write(f"<a href='..//toc.html'>Go Back!</a>")
+
+
 def main():
     categories = ["biznesa_vide", "bankas_un_finanses", "tehnologijas", "nekustamais-ipasums", "pasaule"]
     root_url = "https://www.delfi.lv/bizness/"
@@ -61,9 +77,8 @@ def main():
     article_dict = {category: get_articles(root_url, category, 2) for category in categories}
 
     create_toc(article_dict)
-
-
-
+    create_article_dirs(article_dict)
+    create_formatted_articles(article_dict)
 
 
 if __name__ == "__main__":
