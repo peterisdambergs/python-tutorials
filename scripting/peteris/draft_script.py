@@ -54,18 +54,31 @@ def create_toc(article_dict):
             f.write("</ol>\n")
 
 
+def create_article_dirs(article_dict):
+    for category in article_dict:
+        if not os.path.exists(category):
+            os.mkdir(category)
+
+
+def create_formatted_articles(article_dict):
+    for category in article_dict:
+        for article in article_dict.get(category):
+            with open(article.get("path"), "w", encoding="utf-8") as f:
+                f.write(f"<a href='{article.get('link')}'><img src='{article.get('image')}' alt='Text'></a>")
+                f.write(f"<h1><a href='{article.get('link')}'>{article.get('name')}</a></h1>")
+                f.write(f"<p>{article.get('content')}</p>")
+                f.write(f"<a href='..\\toc.html'>Go back!</a>")
+
+
 def main():
     root_url = "https://www.delfi.lv/bizness"
-    category_dict = {
-        "biznesa_vide": "Economy",
-        "bankas_un_finanses": "Finance",
-        "tehnologijas": "Tech",
-        "nekustamais-ipasums": "Real Estate",
-        "pasaule": "World"
-    }
+    categories = ["biznesa_vide", "bankas_un_finanses", "tehnologijas", "nekustamais-ipasums", "pasaule"]
 
-    article_dict = {category: get_articles(root_url, category, 3) for category in category_dict}
+    article_dict = {category: get_articles(root_url, category, 3) for category in categories}
+
     create_toc(article_dict)
+    create_article_dirs(article_dict)
+    create_formatted_articles(article_dict)
 
 
 if __name__ == "__main__":
