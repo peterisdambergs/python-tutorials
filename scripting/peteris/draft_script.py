@@ -9,24 +9,24 @@ def get_html_from_url(url):
 
 
 def get_formatted_article(raw_article, category, num):
-    link = f"https://delfi.lv{raw_article.a.get('href')}"
-    article = {
-        "name": raw_article.get_text(),
-        "link": link,
-        "image": raw_article.img.get("src"),
-        "path": os.path.join(category, f"{num}.html"),
-        "content": get_article_content(link)
-    }
+    name = raw_article.get_text()
+    link = raw_article.a.get('href')
+    image = raw_article.img.get("src")
+    path = os.path.join(category, f"{num}.html")
+    content, date = get_article_content_and_date(link)
 
-    return article
+    return { "name": name, "link": link, "image": image, "path": path, "date": date, "content": content}
 
 
-def get_article_content(link):
+def get_article_content_and_date(link):
     html = get_html_from_url(link)
     soup = BeautifulSoup(html, "lxml")
 
     raw_sections = soup.find("main").find("main").find_all("section")
-    return "\n".join([raw_section.text for raw_section in raw_sections])
+    content = "\n".join([raw_section.text for raw_section in raw_sections])
+
+    date = soup.find("time").get_text()[:10]
+    return content, date
 
 
 def get_articles(root_url, category, article_count):
@@ -44,8 +44,8 @@ def get_articles(root_url, category, article_count):
     return articles
 
 
-def create_toc(article_dict):
-    with open("toc.html", "w", encoding="utf-8") as f:
+def create_toc(article_dict, toc_file_name):
+    with open(toc_file_name, "w", encoding="utf-8") as f:
         f.write("<h1>Table of Contents</h1>\n")
         for category in article_dict:
             f.write(f"<h3>{category}</h3>\n<ol>\n")
@@ -74,11 +74,15 @@ def main():
     root_url = "https://www.delfi.lv/bizness"
     categories = ["biznesa_vide", "bankas_un_finanses", "tehnologijas", "nekustamais-ipasums", "pasaule"]
 
-    article_dict = {category: get_articles(root_url, category, 3) for category in categories}
+    # article_dict = {category: get_articles(root_url, category, 3) for category in categories}
 
-    create_toc(article_dict)
-    create_article_dirs(article_dict)
-    create_formatted_articles(article_dict)
+    # create_toc(article_dict, "table_of_contents.html")
+    # create_article_dirs(article_dict)
+    # create_formatted_articles(article_dict)
+
+    article = get_articles(root_url, "biznesa_vide", 1)[0]
+    for key in article:
+        print(f"{key}: {article.get(key)}")
 
 
 if __name__ == "__main__":
