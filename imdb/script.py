@@ -1,11 +1,14 @@
 import requests
+from bs4 import BeautifulSoup
+
 
 
 def get_html_from_url(url):
-    return requests.get(url).text
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+    return requests.get(url, headers=headers).text
 
 
-def create_toc_file(toc_name, categories, year_list, base_url):
+def create_toc_file(toc_name, base_url, categories, year_list):
     with open(toc_name, "w", encoding="utf-8") as f:
         f.write("<h1>Table of Contents</h1>\n")
         for category in categories:
@@ -19,10 +22,13 @@ def main():
     categories = ["drama", "thriller", "action"]
     year_list = [(2004, 2019), (2020, 2024)]
 
-    urltext = get_html_from_url(base_url)
-    # print(urltext)
+    html = get_html_from_url(base_url)
+    soup = BeautifulSoup(html, "lxml")
+    movielist = soup.find_all("ipc-metadata-list-summary-item")
 
-    create_toc_file("imdb_toc.html", categories, year_list, base_url)
+    for movie in movielist:
+        print(movie)
+    # create_toc_file("imdb_toc.html", base_url, categories, year_list)
 
 
 if __name__ == "__main__":
