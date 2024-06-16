@@ -27,7 +27,9 @@ def main():
     movies = soup.find_all('li', attrs={'class': 'ipc-metadata-list-summary-item'})
 
     for movie in movies:
-        print(movie.get_text())
+        movie_link = movie.find_next('a', attrs={'class': 'ipc-title-link-wrapper'})
+        # print(movie.get_text())
+        print(movie_link.find_next('href'))
     create_toc_file("imdb_toc.html", base_url, categories, year_list)
 
 
