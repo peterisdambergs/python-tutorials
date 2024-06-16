@@ -1,6 +1,6 @@
 import requests
-from bs4 import BeautifulSoup
 
+from bs4 import BeautifulSoup
 
 
 def get_html_from_url(url):
@@ -24,11 +24,11 @@ def main():
 
     html = get_html_from_url(base_url)
     soup = BeautifulSoup(html, "lxml")
-    movielist = soup.find_all("ipc-metadata-list-summary-item")
+    movies = soup.find_all('li', attrs={'class': 'ipc-metadata-list-summary-item'})
 
-    for movie in movielist:
-        print(movie)
-    # create_toc_file("imdb_toc.html", base_url, categories, year_list)
+    for movie in movies:
+        print(movie.get_text())
+    create_toc_file("imdb_toc.html", base_url, categories, year_list)
 
 
 if __name__ == "__main__":
