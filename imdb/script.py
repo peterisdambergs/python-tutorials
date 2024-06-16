@@ -17,12 +17,31 @@ def create_toc_file(toc_name, base_url, categories, year_list):
                 f.write(f"<h3><a href={link}>{category.capitalize()}: {year[0]} - {year[1]}</a></h3>\n")
 
 
-def get_movie_links_from_url(base_url, url):
-    html = get_html_from_url(f"{base_url}/{url}")
+def get_movie_link_from_movie_element(base_url, movie):
+    return f"{base_url}{movie.find_next('a', attrs={'class': 'ipc-title-link-wrapper'}).get('href')}"
+
+
+def get_movie_links(base_url, category, year):
+    url = f"{base_url}/chart/moviemeter/?ref_=nv_mv_mpm&genres={category}&year={year[0]}%2C{year[1]}"
+    html = get_html_from_url(url)
     soup = BeautifulSoup(html, "lxml")
     movies = soup.find_all('li', attrs={'class': 'ipc-metadata-list-summary-item'})
-    for movie in movies:
-        movie_link = f"{base_url}{movie.find_next('a', attrs={'class': 'ipc-title-link-wrapper'}).get('href')}"
+
+    return [get_movie_link_from_movie_element(base_url, movie) for movie in movies]
+
+
+def get_formatted_movie(movie_link):
+    soup = BeautifulSoup(get_html_from_url(movie_link), "lxml")
+
+    movie = {
+        'link': movie_link,
+        'title': soup.find_next('span', attrs={'class': 'hero__primary-text'}),
+        'rating': None,
+        'description': None,
+        'img_link': None
+    }
+
+    return movie
 
 
 
@@ -31,12 +50,11 @@ def main():
     categories = ["drama", "thriller", "action"]
     year_list = [(2004, 2019), (2020, 2024)]
 
-    url = "chart/moviemeter/?ref_=nv_mv_mpm"
+    movie_links = get_movie_links(base_url, categories[0], year_list[0])
 
-    for movie in movies:
-        movie_link = f"{base_url}{movie.find_next('a', attrs={'class': 'ipc-title-link-wrapper'}).get('href')}"
-        # print(movie.get_text())
-        print(movie_link)
+    movie = get_formatted_movie(movie_links[0])
+    print(movie)
+
     # create_toc_file("imdb_toc.html", base_url, categories, year_list)
 
 
