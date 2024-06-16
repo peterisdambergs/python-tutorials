@@ -13,24 +13,31 @@ def create_toc_file(toc_name, base_url, categories, year_list):
         f.write("<h1>Table of Contents</h1>\n")
         for category in categories:
             for year in year_list:
-                link = f"{base_url}&genres={category}&year={year[0]}%2C{year[1]}"
+                link = f"{base_url}/chart/moviemeter/?ref_=nv_mv_mpm&genres={category}&year={year[0]}%2C{year[1]}"
                 f.write(f"<h3><a href={link}>{category.capitalize()}: {year[0]} - {year[1]}</a></h3>\n")
 
 
+def get_movie_links_from_url(base_url, url):
+    html = get_html_from_url(f"{base_url}/{url}")
+    soup = BeautifulSoup(html, "lxml")
+    movies = soup.find_all('li', attrs={'class': 'ipc-metadata-list-summary-item'})
+    for movie in movies:
+        movie_link = f"{base_url}{movie.find_next('a', attrs={'class': 'ipc-title-link-wrapper'}).get('href')}"
+
+
+
 def main():
-    base_url = "https://www.imdb.com/chart/moviemeter/?ref_=nv_mv_mpm"
+    base_url = "https://www.imdb.com"
     categories = ["drama", "thriller", "action"]
     year_list = [(2004, 2019), (2020, 2024)]
 
-    html = get_html_from_url(base_url)
-    soup = BeautifulSoup(html, "lxml")
-    movies = soup.find_all('li', attrs={'class': 'ipc-metadata-list-summary-item'})
+    url = "chart/moviemeter/?ref_=nv_mv_mpm"
 
     for movie in movies:
-        movie_link = movie.find_next('a', attrs={'class': 'ipc-title-link-wrapper'})
+        movie_link = f"{base_url}{movie.find_next('a', attrs={'class': 'ipc-title-link-wrapper'}).get('href')}"
         # print(movie.get_text())
-        print(movie_link.find_next('href'))
-    create_toc_file("imdb_toc.html", base_url, categories, year_list)
+        print(movie_link)
+    # create_toc_file("imdb_toc.html", base_url, categories, year_list)
 
 
 if __name__ == "__main__":
