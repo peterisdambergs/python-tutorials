@@ -30,15 +30,15 @@ def get_movie_links(base_url, category, year):
     return [get_movie_link_from_movie_element(base_url, movie) for movie in movies]
 
 
-def get_formatted_movie(movie_link):
+def get_formatted_movie(movie_link, base_url):
     soup = BeautifulSoup(get_html_from_url(movie_link), "lxml")
 
     movie = {
         'link': movie_link,
-        'title': soup.find_next('span', attrs={'class': 'hero__primary-text'}),
-        'rating': None,
-        'description': None,
-        'img_link': None
+        'title': soup.find('span', attrs={'class': 'hero__primary-text'}).text,
+        'rating': soup.find('span', attrs={'class': 'sc-bde20123-1 cMEQkK'}).text,
+        'description': soup.find('span', attrs={'class': 'sc-96357b74-2 CKcbM'}).text,
+        'img_link': f"{base_url}{soup.find('a', attrs={'class': 'ipc-lockup-overlay ipc-focusable'}).get('href')}"
     }
 
     return movie
@@ -52,7 +52,7 @@ def main():
 
     movie_links = get_movie_links(base_url, categories[0], year_list[0])
 
-    movie = get_formatted_movie(movie_links[0])
+    movie = get_formatted_movie(movie_links[0], base_url)
     print(movie)
 
     # create_toc_file("imdb_toc.html", base_url, categories, year_list)
