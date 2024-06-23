@@ -18,7 +18,7 @@ def create_toc_file(toc_name, base_url, categories, year_list):
 
 
 def get_movie_link_from_movie_element(base_url, movie):
-    return f"{base_url}{movie.find_next('a', attrs={'class': 'ipc-title-link-wrapper'}).get('href')}"
+    return f"{base_url}{movie.find('a', attrs={'class': 'ipc-title-link-wrapper'}).get('href')}"
 
 
 def get_movie_links(base_url, category, year):
@@ -35,10 +35,10 @@ def get_formatted_movie(movie_link, base_url):
 
     movie = {
         'link': movie_link,
-        'title': soup.find('span', attrs={'class': 'hero__primary-text'}).text,
-        'rating': soup.find('span', attrs={'class': 'sc-bde20123-1 cMEQkK'}).text,
-        'description': soup.find('span', attrs={'class': 'sc-96357b74-2 CKcbM'}).text,
-        'img_link': f"{base_url}{soup.find('a', attrs={'class': 'ipc-lockup-overlay ipc-focusable'}).get('href')}"
+        'title': soup.find('h1', attrs={'data-testid': 'hero__pageTitle'}).text,
+        'rating': soup.find('div', attrs={'data-testid': 'hero-rating-bar__aggregate-rating__score'}).text,
+        'description': soup.find('span', attrs={'data-testid': 'plot-xl'}).text,
+        'img_link': soup.find('div', attrs={'data-testid': 'hero-media__poster'}).find('img').get('src')
     }
 
     return movie
